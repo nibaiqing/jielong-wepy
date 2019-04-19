@@ -1,0 +1,121 @@
+<template>
+  <view class="login-container">
+    <image class="login-icon" src="../images/logo.png"></image>
+    <view class="login-title">大鱼接龙</view>
+    <view class="login-check">登录后查看小程序</view>
+    <form report-submit="true" bindsubmit="postFormId">
+      <button class="login-btn" lang="zh_CN" open-type="getUserInfo" bindgetuserinfo="getUserInfo" form-type="submit" @tap="canILogin">微信登录</button>
+    </form>
+  </view>
+</template>
+<script>
+import wepy from 'wepy'
+import tip from '@/utils/tip'
+import api from '@/api/api'
+import {
+  SYSTEM_INFO,
+  USER_TOKEN
+} from '@/utils/constant'
+export default class Login extends wepy.page {
+  config = {
+    navigationBarBackgroundColor: '#fff',
+    navigationBarTextStyle: 'black'
+  }
+  data = {
+    wxf: ''
+  }
+  async onLoad(options) {
+    if (options.wxf) {
+      this.wxf = options.wxf
+    }
+    let res = await wepy.login()
+    if (res.code) {
+      this.code = res.code
+    } else {
+      tip.confirm('无法获取授权，请重新加载!', {}, '登录失败')
+    }
+  }
+  async getUserInfo(e) {
+    if (e.detail.errMsg === 'getUserInfo:ok') {
+      const systemInfo = wepy.getSystemInfoSync()
+      wepy.setStorageSync(SYSTEM_INFO, systemInfo)
+      let rlt = await api.loginUrl({
+        query: {
+          wxf: this.wxf
+        },
+        header: {
+          'X-WX-Code': this.code,
+          'X-WX-Encrypted-Data': e.detail.encryptedData,
+          'X-WX-IV': e.detail.iv
+        }
+      })
+      if (rlt.data.code === 0) {
+        wepy.setStorageSync(USER_TOKEN, rlt.data.data.token)
+        this.$parent.globalData.userInfo = rlt.data.data.userInfo
+        wepy.navigateBack()
+      } else {
+        tip.confirm('登录失败，可能是服务器发生异常')
+      }
+    } else if (e.detail.errMsg === 'getUserInfo:fail auth deny') {
+      tip.confirm('需要授权才能登录')
+    }
+  }
+  async postFormId(e) {
+    try {
+      await api.postFormId({
+        query: {
+          form_id: e.detail.formId
+        }
+      })
+    } catch (err) {}
+  }
+  methods = {
+    canILogin() {
+      if (!wepy.canIUse('button.open-type.getUserInfo')) {
+        tip.confirm('当前微信版本过低，无法使用该功能，请升级到最新微信版本后重试')
+      }
+    }
+  }
+}
+</script>
+<style lang="less">
+@import '../styles/variable';
+@import '../styles/gradient';
+.login-container{
+  height: 100%;
+  text-align: center;
+  padding-top: 172rpx;
+  background: @color;
+  .login-icon{
+    width: 160rpx;
+    height: 160rpx;
+    .auto();
+  }
+  .login-title{
+    width: 100%;
+    height: 50rpx;
+    line-height: 50rpx;
+    font-size: @fontSize + 8;
+    margin: 20rpx 0 226rpx;
+    color: @fontColor;
+  }
+  .login-check{
+    width: 100%;
+    font-size: 28rpx;
+    color: @fontColor * 3;
+    height: 40rpx;
+    line-height: 40rpx;
+    margin-bottom: 30rpx;
+  }
+  .login-btn{
+    .auto();
+    &:extend(.ff8a66_ff4545);
+    width: 66.67%;
+    height: 88rpx;
+    line-height: 88rpx;
+    border-radius: 200rpx;
+    color: @color;
+    font-size: @fontSize + 8;
+  }
+}
+</style>

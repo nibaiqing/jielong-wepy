@@ -1,0 +1,35 @@
+<template>
+  <view class="empty-data" wx:if="{{show}}">
+    <image src="../../images/empty.png"></image>
+    <view class="empty-text">{{message}}</view>
+  </view>
+</template>
+<script>
+import wepy from 'wepy'
+export default class Empty extends wepy.component {
+  props = {
+    show: {
+      type: Boolean,
+      default: false
+    },
+    message: {
+      default: '暂无数据'
+    }
+  }
+}
+</script>
+<style lang="less">
+@import '../../styles/variable';
+.empty-data{
+  text-align: center;
+  color: @fontColor * 3;
+  font-size: @fontSize;
+  padding-top: 40rpx;
+  image{
+    width: 122rpx;
+    height: 150rpx;
+    .auto();
+    margin-bottom: 20rpx;
+  }
+}
+</style>

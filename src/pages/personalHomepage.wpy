@@ -1,0 +1,12 @@
+<template>
+
+</template>
+<script>
+import wepy from 'wepy'
+export default class personalHomepage extends wepy.page {
+
+}
+</script>
+<style lang="less">
+
+</style>

@@ -1,0 +1,49 @@
+/*public variate*/
+@fontColor: #333;
+@fontSize: 28rpx;
+@color: #fff;
+@bgColor: #f6f6f6;
+
+.auto(@a: 0) {
+  margin: @a auto;
+}
+
+.border(@color: #eee) {
+  border-bottom:2rpx solid @color;
+}
+
+.shadow(@a: 0, @b: 4rpx, @c: 8rpx, @color: #eee) {
+  box-shadow: @arguments;
+}
+
+/*万能清除法*/
+.clearfix {
+  zoom: 1;
+}
+
+.clearfix:after {
+  content: " ";
+  visibility: hidden;
+  display: block;
+  font-size: 0;
+  height: 0;
+  clear: both;
+}
+
+/*省略号*/
+.single-row {
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+  word-break: break-all;
+  width: 100%;
+}
+
+.multi-row {
+  text-overflow: ellipsis;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  word-break: break-all;
+}

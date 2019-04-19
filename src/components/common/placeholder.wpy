@@ -1,0 +1,28 @@
+<template>
+  <view class="empty-placeholder" wx:if="{{show}}">
+    <view>{{message}}</view>
+  </view>
+</template>
+<script>
+import wepy from 'wepy'
+export default class Placeholder extends wepy.component {
+  props = {
+    show: {
+      type: Boolean,
+      default: false
+    },
+    message: {
+      default: '没有相关信息'
+    }
+  }
+}
+</script>
+<style lang="less">
+@import '../../styles/variable';
+.empty-placeholder{
+  text-align: center;
+  color: @fontColor + #666;
+  font-size: @fontSize - 4;
+  .auto(20rpx);
+}
+</style>

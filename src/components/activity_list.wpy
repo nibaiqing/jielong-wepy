@@ -1,0 +1,90 @@
+<template>
+  <view class="activityList-container">
+    <view class="activity-list" wx:for="{{list}}" wx:key="item">
+      <navigator class="user-wrap" open-type="navigate" url="../pages/personalHomepage?uid={{item.activity_uid}}" hover-class="none">
+        <image class="user-avatar" src="{{item.avatar}}"></image>
+        <view class="user-info">
+          <view class="user-name">{{item.nick_name}}</view>
+          <view class="publish-time">{{item.created_date}}</view>
+        </view>
+        <view class="activity-state {{item.activity_state == 1 ? 'activity-pedding' : item.activity_state == 2 ? 'activity-end' : 'activity-notStart'}}">{{item.activity_state == 1 ? '进行中' : item.activity_state == 2 ? '已结束' : '未开始'}}</view>
+      </navigator>
+
+    </view>
+  </view>
+</template>
+<script>
+import wepy from 'wepy'
+export default class ActivityList extends wepy.component {
+  props = {
+    list: []
+  }
+  data = {}
+}
+</script>
+<style lang="less">
+@import '../styles/variable';
+@import '../styles/gradient';
+@import '../styles/flex';
+.activityList-container{
+  height: 100%;
+  background: @color;
+  .activity-list:extend(.clearfix){
+    .border();
+    margin-left: 15rpx;
+    padding: 0 30rpx 19rpx;
+    background: @color;
+    .user-wrap{
+      height: 80rpx;
+      line-height: 80rpx;
+      margin: 30rpx 0 16rpx;
+      .user-avatar{
+        float: left;
+        width: 80rpx;
+        height: 80rpx;
+        border-radius: 50%;
+        margin-right: 18rpx;
+      }
+      .user-info{
+        margin-top: 6rpx;
+        float: left;
+        .user-name{
+          &:extend(.single-row);
+          width: 320rpx;
+          height: 32rpx;
+          line-height: 32rpx;
+          font-size: @fontSize + 4;
+          margin-bottom: 12rpx;
+        }
+        .publish-time{
+          height: 24rpx;
+          line-height: 24rpx;
+          font-size: @fontSize - 4;
+          color: @fontColor * 3;
+        }
+      }
+      .activity-state{
+        width: 136rpx;
+        height: 52rpx;
+        line-height: 52rpx;
+        margin-top: 14rpx;
+        text-align: center;
+        color: @color;
+        font-size: @fontSize;
+        border-radius: 200rpx;
+        float: right;
+      }
+      .activity-pedding{
+        &:extend(.ff4545_ff8a66);
+      }
+      .activity-notStart{
+        &:extend(.ffab45_ffc966);
+      }
+      .activity-end{
+        background-color: #ccc;
+      }
+    }
+  }
+}
+
+</style>
