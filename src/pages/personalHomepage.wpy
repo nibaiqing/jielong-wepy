@@ -1,5 +1,5 @@
 <template>
-
+  <view class="personal-container"></view>
 </template>
 <script>
 import wepy from 'wepy'

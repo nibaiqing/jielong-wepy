@@ -1,15 +1,28 @@
 <template>
   <view class="activityList-container">
     <view class="activity-list" wx:for="{{list}}" wx:key="item">
-      <navigator class="user-wrap" open-type="navigate" url="../pages/personalHomepage?uid={{item.activity_uid}}" hover-class="none">
+      <navigator class="list-top" open-type="navigate" url="/pages/personalHomepage?uid={{item.activity_uid}}" hover-class="none">
         <image class="user-avatar" src="{{item.avatar}}"></image>
         <view class="user-info">
           <view class="user-name">{{item.nick_name}}</view>
-          <view class="publish-time">{{item.created_date}}</view>
+          <view class="publish-time">{{item.created_date}} 发布</view>
         </view>
         <view class="activity-state {{item.activity_state == 1 ? 'activity-pedding' : item.activity_state == 2 ? 'activity-end' : 'activity-notStart'}}">{{item.activity_state == 1 ? '进行中' : item.activity_state == 2 ? '已结束' : '未开始'}}</view>
       </navigator>
-
+      <navigator class="list-center" open-type="navigate" url="" hover-class="none">
+        <view class="activity-title">
+          <image wx:if="{{item.activity_group_state == 1}}" src="../images/icon-type01.png"></image>
+          <image wx:if="{{item.date_type == 2}}" src="../images/icon-type02.png"></image>
+          <image wx:else src="../images/icon-type03.png"></image>
+          <text>{{item.subject}}</text>
+        </view>
+        <view class="activity-desc">{{item.activity_info}}</view>
+        <image class="activity-image" src="{{item.activity_file[0].pic+'?imageView2/1/w/360/h/288/q/90'}}"></image>
+        <view class="list-bottom">
+          <view class="people-num"><text>浏览{{item.browse_num}}人</text><i class="dot"></i><text>参加{{item.join_num}}人</text></view>
+          <view class="redPacket" wx:if="{{item.packet_limit == '1' || item.join_prize_limit == '1'}}"><text>红包接龙</text><image src="../images/home-redPacket.png"></image></view>
+        </view>
+      </navigator>
     </view>
   </view>
 </template>
@@ -29,12 +42,12 @@ export default class ActivityList extends wepy.component {
 .activityList-container{
   height: 100%;
   background: @color;
-  .activity-list:extend(.clearfix){
+  .activity-list{
     .border();
-    margin-left: 15rpx;
+    overflow: hidden;
     padding: 0 30rpx 19rpx;
     background: @color;
-    .user-wrap{
+    .list-top{
       height: 80rpx;
       line-height: 80rpx;
       margin: 30rpx 0 16rpx;
@@ -46,7 +59,7 @@ export default class ActivityList extends wepy.component {
         margin-right: 18rpx;
       }
       .user-info{
-        margin-top: 6rpx;
+        margin-top: 8rpx;
         float: left;
         .user-name{
           &:extend(.single-row);
@@ -84,7 +97,72 @@ export default class ActivityList extends wepy.component {
         background-color: #ccc;
       }
     }
+    .list-center{
+      margin-left: 98rpx;
+      .activity-title{
+        line-height: 40rpx;
+        font-size: @fontSize + 4;
+        margin-bottom: 6rpx;
+        color: @fontColor;
+        image{
+          width: 96rpx;
+          height: 32rpx;
+          display: inline-block;
+          margin-right: 12rpx;
+          vertical-align: middle;
+        }
+        text:extend(.single-row){
+          height: 100%;
+          width: calc(100% - 108rpx);
+          vertical-align: middle;
+          display: inline-block;
+          font-weight: bold;
+        }
+      }
+      .activity-desc{
+        &:extend(.multi-row);
+        font-size:@fontSize;
+        color:@fontColor + #333;
+        height: 40rpx;
+        line-height:40rpx;
+        margin-bottom:20rpx;
+      }
+      .activity-image{
+        width: 360rpx;
+        height: 288rpx;
+        margin-bottom:28rpx;
+      }
+    }
+    .list-bottom{
+      color: @fontColor * 3;
+      font-size: @fontSize - 4;
+      height: 28rpx;
+      line-height: 28rpx;
+      .people-num{
+        float: left;
+        display: flex;
+        align-items: center;
+        .dot{
+          width:8rpx;
+          height:8rpx;
+          margin:0 16rpx;
+          border-radius:50%;
+          background:@fontColor * 3;
+        }
+      }
+      .redPacket:extend(.flex){
+        float: right;
+        text{
+          color:#ffab45;
+          font-weight:700;
+        }
+        image{
+          width: 22rpx;
+          height: 28rpx;
+          margin-left: 12rpx;
+        }
+      }
+    }
   }
 }
-
 </style>

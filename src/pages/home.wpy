@@ -47,7 +47,7 @@ export default class Home extends wepy.page {
       }
     })
     if (json.data.code == 0) {
-      if (json.data.data.length > 0) {
+      if (json.data.data.length != 0) {
         this.activity_list = this.isFirstLoad ? json.data.data : this.activity_list.concat(json.data.data)
         this.isLoadmore = true
         if (json.data.data.length < 10) {
@@ -96,15 +96,16 @@ export default class Home extends wepy.page {
   }
   // 加载更多
   onReachBottom() {
-    let count = 0
-    count += parseInt(this.activity_list.length)
-    if (count === this.activity_list.length) {
-      this.is_more = true
-    }
+    console.log(this.is_more);
     if (this.isLoadmore && !this.is_more) {
       this.isFirstLoad = false
       this.currentPage += 1
       this.getActivityList(this.currentPage)
+    }
+    console.log(this.currentPage)
+    console.log(this.activity_list.length)
+    if ((this.currentPage - 1) * 10 > this.activity_list.length) {
+      this.is_more = true
     }
   }
 }

@@ -8,7 +8,6 @@ import 'wepy-async-function'
 
 import api from './api/api'
 import { USER_TOKEN } from './utils/constant'
-import tip from './utils/tip'
 
 import { setStore } from 'wepy-redux'
 import configStore from './store'
@@ -20,6 +19,7 @@ export default class extends wepy.app {
   config = {
     pages: [
       'pages/home',
+      'pages/personalHomepage',
       'pages/user',
       'pages/login'
     ],
