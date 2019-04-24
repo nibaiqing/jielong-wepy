@@ -12,6 +12,7 @@ export default class Placeholder extends wepy.component {
       default: false
     },
     message: {
+      type: String,
       default: '没有相关信息'
     }
   }
@@ -23,6 +24,6 @@ export default class Placeholder extends wepy.component {
   text-align: center;
   color: @fontColor + #666;
   font-size: @fontSize - 4;
-  .auto(20rpx);
+  padding: 20rpx 0;
 }
 </style>

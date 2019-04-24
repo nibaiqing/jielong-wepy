@@ -29,24 +29,12 @@ export default class Tips {
   /**
    * 弹出确认窗口
    */
-  static confirm(text, payload = {}, title = "提示") {
-    return new Promise((resolve, reject) => {
-      wx.showModal({
-        title: title,
-        content: text,
-        showCancel: false,
-        confirmColor: '#ff4545',
-        success: res => {
-          if (res.confirm) {
-            resolve(payload);
-          } else {
-            reject(payload);
-          }
-        },
-        fail: res => {
-          reject(payload);
-        }
-      });
+  static confirm(text, title = "提示") {
+    wx.showModal({
+      title: title,
+      content: text,
+      showCancel: false,
+      confirmColor: '#ff4545'
     });
   }
 

@@ -1,12 +1,243 @@
 <template>
-  <view class="personal-container"></view>
+  <view class="personal-container">
+    <view class="personal-header">
+      <view class="personal-userInfo">
+        <image src="{{userInfo.avatar}}"></image>
+        <view class="user-name">{{userInfo.username}}</view>
+      </view>
+      <view class="follow-btn" hidden='{{userInfo.self == 1 ? true : false}}' @tap="followEvent">{{followTitle}}</view>
+    </view>
+    <view class="personal-nav">
+      <view><text>{{total.attn_num}}</text><text>关注人数</text></view>
+      <view><text>{{total.activity_num}}</text><text>活动数</text></view>
+      <view><text>{{total.activity_user_num}}</text><text>参与人数</text></view>
+    </view>
+    <activityList :list.sync="activity_list" :pageName.sync="name"></activityList>
+    <bottomLoadMore :show.sync="isLoadmore" message="正在加载..."></bottomLoadMore>
+    <placeholder :show.sync="is_more" message="没有更多了"></placeholder>
+    <tips :show.sync="follow_show" :message.sync="follow_content"></tips>
+  </view>
 </template>
 <script>
 import wepy from 'wepy'
+import api from '@/api/api'
+import tip from '@/utils/tip'
+import ActivityList from '@/components/activity_list'
+import BottomLoadMore from '@/components/common/bottomLoadMore'
+import Placeholder from '@/components/common/placeholder'
+import Tips from '@/components/common/tips'
 export default class personalHomepage extends wepy.page {
-
+  config = {
+    navigationBarTitleText: '个人主页'
+  }
+  data = {
+    is_follow: -1,
+    userInfo: {},
+    total: {},
+    disabled: false,
+    followTitle: '关注',
+    activity_list: [],
+    isFirstLoad: true,
+    isLoadmore: false,
+    is_more: false,
+    currentPage: 1,
+    name: 'personal',
+    follow_show: false,
+    follow_content: ''
+  }
+  components = {
+    activityList: ActivityList,
+    bottomLoadMore: BottomLoadMore,
+    placeholder: Placeholder,
+    tips: Tips
+  }
+  methods = {
+    followEvent() {
+      if (this.disabled) {
+        wx.showModal({
+          content: '您确定要取消关注么',
+          confirmColor: '#ff4545',
+          success: (res) => {
+            if (res.confirm) {
+              this.unfollow()
+              this.disabled = false
+              this.followTitle = '关注'
+            }
+          }
+        })
+      } else {
+        this.follow()
+        this.disabled = true
+        this.followTitle = '已关注'
+      }
+    }
+  }
+  async getInfo(uid) {
+    const json = await api.info({
+      query: {
+        uid: this.uid
+      }
+    })
+    if (json.data.code === 0) {
+      let rlt = json.data.data
+      this.is_follow = rlt.user.is_follow
+      if (rlt.user.is_follow != 1) {
+        this.disabled = false
+        this.followTitle = '关注'
+      } else {
+        this.disabled = true
+        this.followTitle = '已关注'
+      }
+      this.userInfo = {
+        username: rlt.user.username,
+        avatar: rlt.user.avatar,
+        self: rlt.user.self
+      }
+      this.total = {
+        attn_num: rlt.total.attn_num,
+        activity_num: rlt.total.activity_num,
+        activity_user_num: rlt.total.activity_user_num
+      }
+    } else {
+      if (json.data.msg) tip.confirm(json.data.msg)
+    }
+    this.$apply()
+  }
+  async getUserActivityList(currentPage) {
+    const json = await api.userActivityList({
+      query: {
+        page: currentPage || 1,
+        uid: this.uid
+      }
+    })
+    if (json.data.code == 0) {
+      if (json.data.data.length != 0) {
+        this.activity_list = this.isFirstLoad ? json.data.data : this.activity_list.concat(json.data.data)
+        this.isLoadmore = true
+        if (json.data.data.length < 10) {
+          this.isLoadmore = false
+        }
+      } else {
+        this.isLoadmore = false
+      }
+      this.$apply()
+    } else {
+      if (json.data.msg) tip.confirm(json.data.msg)
+    }
+  }
+  async follow() {
+    const json = await api.follow({
+      query: {
+        attn_id: this.uid
+      }
+    })
+    if (json.data.code == 0) {
+      if (json.data.data.success == 'ok') {
+        this.follow_show = true
+        this.follow_content = '关注成功'
+        setTimeout(() => {
+          this.follow_show = false
+          this.$apply();
+        }, 1000)
+      }
+    }
+    this.$apply()
+  }
+  async unfollow() {
+    const json = await api.unfollow({
+      query: {
+        attn_id: this.uid
+      }
+    })
+    if (json.data.code == 0) {
+      if (json.data.data.success == 'ok') {
+        this.follow_show = true
+        this.follow_content = '取消关注成功'
+        setTimeout(() => {
+          this.follow_show = false
+          this.$apply();
+        }, 1000)
+      }
+    }
+    this.$apply()
+  }
+  onLoad(options) {
+    this.activity_list = []
+    this.uid = options.uid
+    this.getInfo()
+    this.getUserActivityList()
+  }
+  onReachBottom() {
+    if (this.isLoadmore) {
+      this.isFirstLoad = false
+      this.currentPage += 1
+      this.getUserActivityList(this.currentPage, this.uid)
+    }
+    if ((this.currentPage - 1) * 10 < this.activity_list.length) {
+      this.is_more = true
+    }
+  }
 }
 </script>
 <style lang="less">
-
+@import '../styles/variable';
+@import '../styles/gradient';
+@import '../styles/flex';
+.personal-container{
+  background: @bgColor;
+  color:@fontColor;
+  font-size: @fontSize;
+  min-height: 100%;
+  .personal-header{
+    height: 180rpx;
+    padding: 0 30rpx;
+    &:extend(.flex);
+    &:extend(.ff8a66_ff4545_b);
+    .personal-userInfo{
+      &:extend(.flex);
+      image{
+        width: 120rpx;
+        height: 120rpx;
+        border-radius: 50%;
+        margin-right: 18rpx;
+      }
+      .user-name:extend(.single-row){
+        color: @color;
+        font-size: @fontSize + 4;
+        width: 320rpx;
+      }
+    }
+    .follow-btn{
+      width: 130rpx;
+      height: 56rpx;
+      line-height: 56rpx;
+      text-align: center;
+      border-radius: 56rpx;
+      color: #ff4545;
+      background: @color;
+    }
+  }
+  .personal-nav:extend(.flex){
+    overflow: hidden;
+    background: @color;
+    padding: 20rpx 80rpx;
+    text-align: center;
+    margin-bottom: 20rpx;
+    text{
+      display:block;
+    }
+    text:nth-of-type(1){
+      font-size: @fontSize + 4;
+      color: @fontColor;
+      height: 44rpx;
+      line-height: 44rpx;
+    }
+    text:nth-of-type(2){
+      font-size: @fontSize - 4;
+      color: @fontColor * 3;
+      height: 34rpx;
+      line-height: 34rpx;
+    }
+  }
+}
 </style>

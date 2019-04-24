@@ -2,13 +2,11 @@
   <view class="home-container">
     <image class="banner-wrap" src="{{banner_pic}}" @tap="goBanner({{ad_link}})"></image>
     <!-- 活动列表 -->
-    <activityList :list.sync="activity_list"></activityList>
+    <activityList :list.sync="activity_list" :pageName.sync="name"></activityList>
     <!--加载更多时动画-->
     <bottomLoadMore :show.sync="isLoadmore" message="正在加载..."></bottomLoadMore>
     <!-- 没有更多数据显示 -->
-    <placeholder :show.sync="is_more" message="已经到底了"></placeholder>
-    <!--空数据显示-->
-    <empty :show.sync="is_empty" message="暂无数据"></empty>
+    <placeholder :show.sync="is_more" message="没有更多了"></placeholder>
   </view>
 </template>
 <script>
@@ -18,7 +16,6 @@ import tip from '@/utils/tip'
 import ActivityList from '@/components/activity_list'
 import BottomLoadMore from '@/components/common/bottomLoadMore'
 import Placeholder from '@/components/common/placeholder'
-import Empty from '@/components/common/empty'
 export default class Home extends wepy.page {
   config = {
     navigationBarTitleText: '大鱼接龙',
@@ -27,13 +24,12 @@ export default class Home extends wepy.page {
   components = {
     activityList: ActivityList,
     bottomLoadMore: BottomLoadMore,
-    placeholder: Placeholder,
-    empty: Empty
+    placeholder: Placeholder
   }
   data = {
+    name: 'home',
     isFirstLoad: true,
     isLoadmore: false,
-    is_empty: false,
     is_more: false,
     banner_pic: 'http://static.mmchong.com/20180604_5b15027bbe215.png',
     activity_list: [],
@@ -54,12 +50,12 @@ export default class Home extends wepy.page {
           this.isLoadmore = false
         }
       } else {
-        this.is_empty = true
         this.isLoadmore = false
       }
       this.$apply()
+      wepy.hideNavigationBarLoading()
     } else {
-      if (json.data.msg) tip.error(json.data.msg)
+      if (json.data.msg) tip.confirm(json.data.msg)
     }
   }
   async getAd() {
@@ -68,14 +64,14 @@ export default class Home extends wepy.page {
         ad_position: 'index_top'
       }
     })
-    if (json.data.code === 0) {
+    if (json.data.code == 0) {
       if (json.data.data.ad_content) {
         this.ad_link = json.data.data.ad_link
         this.banner_image = json.data.data.banner_image
       }
       this.$apply()
     } else {
-      if (json.data.msg) tip.error(json.data.msg)
+      if (json.data.msg) tip.confirm(json.data.msg)
     }
   }
   onLoad() {
@@ -94,17 +90,24 @@ export default class Home extends wepy.page {
       })
     }
   }
-  // 加载更多
+  onPullDownRefresh() {
+    this.currentPage = 1
+    this.activity_list = []
+    this.isFirstLoad = true
+    this.isLoadmore = false
+    this.is_more = false
+    wepy.showNavigationBarLoading()
+    wepy.stopPullDownRefresh()
+    this.getActivityList()
+    this.getAd()
+  }
   onReachBottom() {
-    console.log(this.is_more);
-    if (this.isLoadmore && !this.is_more) {
+    if (this.isLoadmore) {
       this.isFirstLoad = false
       this.currentPage += 1
       this.getActivityList(this.currentPage)
     }
-    console.log(this.currentPage)
-    console.log(this.activity_list.length)
-    if ((this.currentPage - 1) * 10 > this.activity_list.length) {
+    if ((this.currentPage - 1) * 10 < this.activity_list.length) {
       this.is_more = true
     }
   }
@@ -113,7 +116,7 @@ export default class Home extends wepy.page {
 <style lang="less">
 @import '../styles/variable';
 .home-container{
-  background-color: @color;
+  background-color: @bgColor;
   min-height: 100%;
   .banner-wrap{
     width: 100%;

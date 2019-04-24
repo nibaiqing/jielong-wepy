@@ -1,15 +1,20 @@
 <template>
   <view class="activityList-container">
     <view class="activity-list" wx:for="{{list}}" wx:key="item">
-      <navigator class="list-top" open-type="navigate" url="/pages/personalHomepage?uid={{item.activity_uid}}" hover-class="none">
-        <image class="user-avatar" src="{{item.avatar}}"></image>
-        <view class="user-info">
-          <view class="user-name">{{item.nick_name}}</view>
-          <view class="publish-time">{{item.created_date}} 发布</view>
-        </view>
-        <view class="activity-state {{item.activity_state == 1 ? 'activity-pedding' : item.activity_state == 2 ? 'activity-end' : 'activity-notStart'}}">{{item.activity_state == 1 ? '进行中' : item.activity_state == 2 ? '已结束' : '未开始'}}</view>
+      <navigator class="list-top {{pageName == 'home' ? 'top1' : 'top2'}}" open-type="navigate" url="/pages/personalHomepage?uid={{item.activity_uid}}" hover-class="none">
+        <block wx:if="{{pageName == 'home'}}" >
+          <image class="user-avatar" src="{{item.avatar}}"></image>
+          <view class="user-info">
+            <view class="user-name">{{item.nick_name}}</view>
+            <view class="publish-time">{{item.created_date}} 发布</view>
+          </view>
+        </block>
+        <block wx:elif="{{pageName == 'personal'}}">
+          <view class="personal-time">{{item.created_date}} 发布</view>
+        </block>
+        <view class="activity-state {{pageName == 'home' ? 'state1' : 'state2'}} {{item.activity_state == 1 ? (pageName == 'home' ? 'activity-pedding' : 'pedding') : item.activity_state == 2 ? (pageName === 'home' ? 'activity-end' : 'end') : 'activity-notStart'}}">{{item.activity_state == 1 ? '进行中' : item.activity_state == 2 ? '已结束' : '未开始'}}</view>
       </navigator>
-      <navigator class="list-center" open-type="navigate" url="" hover-class="none">
+      <navigator class="list-center {{pageName == 'home' ? 'margin-left' : ''}}" open-type="navigate" url="" hover-class="none">
         <view class="activity-title">
           <image wx:if="{{item.activity_group_state == 1}}" src="../images/icon-type01.png"></image>
           <image wx:if="{{item.date_type == 2}}" src="../images/icon-type02.png"></image>
@@ -30,7 +35,11 @@
 import wepy from 'wepy'
 export default class ActivityList extends wepy.component {
   props = {
-    list: []
+    list: [],
+    pageName: {
+      type: String,
+      default: 'name'
+    }
   }
   data = {}
 }
@@ -41,16 +50,26 @@ export default class ActivityList extends wepy.component {
 @import '../styles/flex';
 .activityList-container{
   height: 100%;
+  position: relative;
   background: @color;
+
   .activity-list{
     .border();
+    margin-left: 30rpx;
     overflow: hidden;
-    padding: 0 30rpx 19rpx;
+    padding: 0 30rpx 19rpx 0;
     background: @color;
-    .list-top{
+    .top1{
       height: 80rpx;
       line-height: 80rpx;
       margin: 30rpx 0 16rpx;
+    }
+    .top2{
+      height: 40rpx;
+      line-height: 40rpx;
+      margin: 30rpx 0 14rpx;
+    }
+    .list-top{
       .user-avatar{
         float: left;
         width: 80rpx;
@@ -76,29 +95,46 @@ export default class ActivityList extends wepy.component {
           color: @fontColor * 3;
         }
       }
+      .personal-time{
+        float: left;
+        color: @fontColor + #666;
+      }
       .activity-state{
         width: 136rpx;
-        height: 52rpx;
-        line-height: 52rpx;
-        margin-top: 14rpx;
-        text-align: center;
         color: @color;
         font-size: @fontSize;
         border-radius: 200rpx;
         float: right;
       }
+      .state1{
+        text-align: center;
+        height: 52rpx;
+        line-height: 52rpx;
+        margin-top: 14rpx;
+      }
+      .state2{
+        text-align: right;
+      }
       .activity-pedding{
         &:extend(.ff4545_ff8a66);
       }
+      .pedding{
+        color:#ff4545;
+      }
       .activity-notStart{
         &:extend(.ffab45_ffc966);
+      }
+      .end{
+        color:#ccc;
       }
       .activity-end{
         background-color: #ccc;
       }
     }
-    .list-center{
+    .margin-left{
       margin-left: 98rpx;
+    }
+    .list-center{
       .activity-title{
         line-height: 40rpx;
         font-size: @fontSize + 4;

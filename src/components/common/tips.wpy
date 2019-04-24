@@ -1,0 +1,38 @@
+<template>
+  <view class="tips-data" wx:if="{{show}}">
+    <view class="tips-content">{{message}}</view>
+  </view>
+</template>
+<script>
+import wepy from 'wepy'
+export default class Tips extends wepy.component {
+  props = {
+    show: {
+      type: Boolean,
+      default: false
+    },
+    message: {
+      default: '提示'
+    }
+  }
+}
+</script>
+<style lang="less">
+@import '../../styles/variable';
+.tips-data{
+  position: fixed;
+  display: inline-block;
+  background: rgba(0,0,0,0.75);
+  text-align: center;
+  border-radius: 8rpx;
+  height: 80rpx;
+  line-height: 80rpx;
+  color:#fff;
+  padding: 0 20rpx;
+  top:50%;
+  left:50%;
+  transform: translate(-50%, -50%);
+  font-size: 28rpx;
+  z-index: 100;
+}
+</style>

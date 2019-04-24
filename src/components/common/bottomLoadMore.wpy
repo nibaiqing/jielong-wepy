@@ -21,11 +21,11 @@ export default class BottomLoadMore extends wepy.component {
 <style lang="less">
   @import '../../styles/variable';
   .loadMoreGif{
-    .auto(20rpx);
-    width: 65%;
+    width: 100%;
     font-size:@fontSize - 4;
     text-align: center;
     color: @fontColor * 3;
+    padding: 20rpx 0;
     .loadmore-loading{
       margin: 0 5px;
       width: 20px;

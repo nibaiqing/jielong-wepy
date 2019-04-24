@@ -32,7 +32,7 @@ export default class Login extends wepy.page {
     if (res.code) {
       this.code = res.code
     } else {
-      tip.confirm('无法获取授权，请重新加载!', {}, '登录失败')
+      tip.confirm('无法获取授权，请重新加载!', '登录失败')
     }
   }
   async getUserInfo(e) {
