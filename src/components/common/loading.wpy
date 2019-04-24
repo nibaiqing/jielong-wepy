@@ -1,0 +1,99 @@
+<template>
+  <view class="loading" wx:if="{{show}}">
+   <view class="allSpinner" >
+      <view class="spinner">
+        <view class="bounce bounce1"><image src="/images/1ha.png"></image></view>
+        <view class="bounce bounce2"><image src="/images/2ha.png"></image></view>
+        <view class="bounce bounce3"><image src="/images/3ha.png"></image></view>
+      </view>
+      <text>品质生活 不再昂贵</text>
+    </view>
+  </view>
+</template>
+<script>
+import wepy from 'wepy'
+export default class loading-data extends wepy.component {
+  props = {
+    show: {
+      type: Boolean,
+      default: false
+    }
+  }
+}
+</script>
+<style lang="less">
+@import '../../styles/variable';
+.loading{
+  padding-top: 340rpx;
+  margin: 0 auto;
+  position: relative;
+  text-align: center;
+  .allSpinner{
+    width: 100%;
+    height: 100%;
+    background: #fff;
+    z-index: 400;
+    .spinner{
+      margin: 80rpx auto 0;
+      width: 100%;
+      text-align: center;
+      .bounce{
+        width: 44rpx;
+        height: 44rpx;
+        border-radius: 100%;
+        display: inline-block;
+        -webkit-animation: bouncedelay 1.4s infinite ease-in-out;
+        animation: bouncedelay 1.4s infinite ease-in-out;
+        -webkit-animation-fill-mode: both;
+        animation-fill-mode: both;
+        margin-right: 8rpx;
+        image{
+          width: 100%;
+          height: 100%;
+          border-radius: 100%;
+        }
+      }
+      .bounce1{
+        -webkit-animation-delay: -0.32s;
+        animation-delay: -0.32s;
+      }
+      .bounce2{
+        -webkit-animation-delay: -0.16s;
+        animation-delay: -0.16s;
+      }
+    }
+    text{
+      display: block;
+      width: 100%;
+      height: 44rpx;
+      line-height: 44rpx;
+      font-size: 28rpx;
+      color: #999;
+      text-align: center;
+      margin-top: 40rpx;
+    }
+  }
+}
+@keyframes bouncedelay {
+  0%,
+  80%,
+  100% {
+    transform: scale(0.0);
+    -webkit-transform: scale(0.0);
+  }
+  40% {
+    transform: scale(1.0);
+    -webkit-transform: scale(1.0);
+  }
+}
+@-webkit-keyframes bouncedelay {
+  0%,
+  80%,
+  100% {
+    -webkit-transform: scale(0.0)
+  }
+  40% {
+    -webkit-transform: scale(1.0)
+  }
+}
+</style>
