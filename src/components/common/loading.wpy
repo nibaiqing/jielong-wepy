@@ -12,7 +12,7 @@
 </template>
 <script>
 import wepy from 'wepy'
-export default class loading-data extends wepy.component {
+export default class loading extends wepy.component {
   props = {
     show: {
       type: Boolean,

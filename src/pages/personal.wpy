@@ -26,7 +26,7 @@ import ActivityList from '@/components/activity_list'
 import BottomLoadMore from '@/components/common/bottomLoadMore'
 import Placeholder from '@/components/common/placeholder'
 import Tips from '@/components/common/tips'
-export default class personalHomepage extends wepy.page {
+export default class Personal extends wepy.page {
   config = {
     navigationBarTitleText: '个人主页'
   }

@@ -19,8 +19,8 @@ export default class extends wepy.app {
   config = {
     pages: [
       'pages/home',
-      'pages/personalHomepage',
-      'pages/user',
+      'pages/personal',
+      'pages/my',
       'pages/login'
     ],
     window: {
@@ -44,9 +44,9 @@ export default class extends wepy.app {
           text: '大鱼圈子'
         },
         {
-          pagePath: 'pages/user',
-          iconPath: 'images/icon-user.png',
-          selectedIconPath: 'images/icon-user-highlight.png',
+          pagePath: 'pages/my',
+          iconPath: 'images/icon-my.png',
+          selectedIconPath: 'images/icon-my-highlight.png',
           text: '个人中心'
         }]
     }

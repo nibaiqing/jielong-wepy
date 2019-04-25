@@ -3,7 +3,7 @@
 </template>
 <script>
 import wepy from 'wepy'
-export default class User extends wepy.page {
+export default class My extends wepy.page {
 
 }
 </script>

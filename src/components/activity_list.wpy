@@ -1,7 +1,7 @@
 <template>
   <view class="activityList-container">
     <view class="activity-list" wx:for="{{list}}" wx:key="item">
-      <navigator class="list-top {{pageName == 'home' ? 'top1' : 'top2'}}" open-type="navigate" url="/pages/personalHomepage?uid={{item.activity_uid}}" hover-class="none">
+      <navigator class="list-top {{pageName == 'home' ? 'top1' : 'top2'}}" open-type="navigate" url="/pages/personal?uid={{item.activity_uid}}" hover-class="none">
         <block wx:if="{{pageName == 'home'}}" >
           <image class="user-avatar" src="{{item.avatar}}"></image>
           <view class="user-info">
